@@ -3,15 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {});
+    await queryInterface.addConstraint("users", {
+      fields: ["email"],
+      type: "unique",
+      name: "unique_email_constraint",
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    await queryInterface.removeConstraint("users", "unique_email_constraint");
   },
 };
