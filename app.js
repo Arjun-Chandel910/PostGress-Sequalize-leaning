@@ -1,12 +1,19 @@
 // index.js
 require("dotenv").config();
 const express = require("express");
-const authRoute = require("./route/auth_route.js");
-
+const authRoute = require("./route/auth.route.js");
 const app = express();
-
+const db = require("./db/models");
 // Middleware
 app.use(express.json()); // parse JSON bodies
+db.sequelize
+  .sync({ force: false }) // `force: false` prevents dropping tables on every sync
+  .then(() => {
+    console.log("Database synced successfully!");
+  })
+  .catch((err) => {
+    console.error("Failed to sync database:", err);
+  });
 
 app.use("/api/v1/auth", authRoute);
 // Basic route

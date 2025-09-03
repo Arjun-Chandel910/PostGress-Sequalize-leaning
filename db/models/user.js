@@ -1,4 +1,5 @@
 "use strict";
+const bcrypt = require("bcrypt");
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
@@ -20,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       email: {
         type: DataTypes.STRING,
+        unique: true,
       },
       password: {
         type: DataTypes.STRING,
@@ -37,8 +39,15 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "user",
+      tableName: "users", // this should map the table name
+      //  in the database(sequelize uses this to map to the table in the db).
       timestamps: true,
+      hooks: {
+        beforeCreate: async (user, options) => {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
+        },
+      },
     }
   );
   return User;
